@@ -1,5 +1,14 @@
 # @emdash-cms/cloudflare
 
+## 0.5.0
+
+### Patch Changes
+
+- [#543](https://github.com/emdash-cms/emdash/pull/543) [`7382c9d`](https://github.com/emdash-cms/emdash/commit/7382c9d432cb0823aa6f3282d30fa8a9bbb9e0d8) Thanks [@ascorbic](https://github.com/ascorbic)! - Fixes sandboxed plugin loading in Worker Loader by providing an `emdash` shim module
+
+- Updated dependencies [[`82c6345`](https://github.com/emdash-cms/emdash/commit/82c63451ff05ddc0a8e2777c124907358814da2b)]:
+  - emdash@0.5.0
+
 ## 0.4.0
 
 ### Patch Changes

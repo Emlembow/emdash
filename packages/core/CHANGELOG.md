@@ -1,5 +1,18 @@
 # emdash
 
+## 0.5.0
+
+### Minor Changes
+
+- [#540](https://github.com/emdash-cms/emdash/pull/540) [`82c6345`](https://github.com/emdash-cms/emdash/commit/82c63451ff05ddc0a8e2777c124907358814da2b) Thanks [@jdevalk](https://github.com/jdevalk)! - Adds `where: { status?, locale? }` to `ContentListOptions`, letting plugins narrow `ContentAccess.list()` results at the database layer instead of filtering the returned array. The underlying repository already supports these filters — this PR only exposes them through the plugin-facing type.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @emdash-cms/admin@0.5.0
+  - @emdash-cms/auth@0.5.0
+  - @emdash-cms/gutenberg-to-portable-text@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes
