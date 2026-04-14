@@ -1,0 +1,113 @@
+---
+import { getEmDashCollection } from "emdash";
+import Base from "../../layouts/Base.astro";
+import PostCard from "../../components/PostCard.astro";
+
+const { x402 } = Astro.locals as { x402?: any };
+if (x402) {
+	const result = await x402.enforce(Astro.request);
+	if (result instanceof Response) return result;
+	x402.applyHeaders(result, Astro.response);
+}
+
+const { entries: posts, cacheHint } = await getEmDashCollection("posts");
+Astro.cache.set(cacheHint);
+
+const sortedPosts = posts.toSorted((a, b) => {
+	const dateA = a.data.publishedAt?.getTime() ?? 0;
+	const dateB = b.data.publishedAt?.getTime() ?? 0;
+	return dateB - dateA;
+});
+---
+
+<Base title="Writing" description="Thoughts on product management, technology, and career.">
+	<div class="page-container">
+		<div class="page-header">
+			<a href="/" class="back-link">&larr; Back</a>
+			<div class="section-header" data-number="05">
+				<h1>Writing</h1>
+			</div>
+		</div>
+		{sortedPosts.length > 0 ? (
+			<div class="posts-list">
+				{sortedPosts.map((post) => (
+					<PostCard
+						title={post.data.title ?? "Untitled"}
+						excerpt={post.data.excerpt}
+						href={`/blog/${post.id}`}
+						publishedAt={post.data.publishedAt}
+					/>
+				))}
+			</div>
+		) : (
+			<p class="empty">No posts yet.</p>
+		)}
+	</div>
+</Base>
+
+<style>
+	.page-container {
+		position: relative;
+		z-index: 1;
+		max-width: 720px;
+		margin: 0 auto;
+		padding: 4rem 1.5rem;
+	}
+
+	.page-header {
+		margin-bottom: 2rem;
+	}
+
+	.back-link {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		padding: 3px 8px;
+		background: var(--surface-300);
+		border-radius: var(--radius-pill);
+		margin-bottom: 2rem;
+		transition: color 150ms ease, background 150ms ease;
+		letter-spacing: -0.01em;
+	}
+
+	.back-link:hover {
+		color: var(--accent-hover);
+		background: var(--surface-500);
+	}
+
+	.section-header {
+		position: relative;
+		padding-bottom: 1rem;
+		display: flex;
+		align-items: baseline;
+		gap: 1.25rem;
+		border-bottom: 1px solid var(--border-primary);
+	}
+
+	.section-header::before {
+		content: attr(data-number);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 400;
+		color: var(--accent);
+		letter-spacing: 0.08em;
+	}
+
+	.section-header h1 {
+		font-family: var(--font-display);
+		font-size: 2.25rem;
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+		color: var(--text-primary);
+	}
+
+	.empty {
+		font-family: var(--font-body);
+		color: var(--text-muted);
+		font-size: 1.08rem;
+	}
+</style>

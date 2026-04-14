@@ -1,6 +1,9 @@
 # build output
 dist/
 
+# reference repos
+.reference/
+
 # generated types
 .astro/
 
@@ -17,6 +20,7 @@ pnpm-debug.log*
 
 # environment variables
 .env
+.env.local
 .env.production
 .dev.vars
 

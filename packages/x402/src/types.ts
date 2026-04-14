@@ -41,6 +41,17 @@ export interface X402Config {
 	defaultPrice?: Price;
 	/** Facilitator URL (defaults to x402.org testnet facilitator) */
 	facilitatorUrl?: string;
+	/** Coinbase CDP API key ID (enables CDP JWT auth for the facilitator) */
+	cdpApiKeyId?: string;
+	/** Coinbase CDP API key secret (PEM EC key or base64 Ed25519) */
+	cdpApiKeySecret?: string;
+	/**
+	 * Enable Bazaar discovery — registers the bazaarResourceServerExtension
+	 * so the facilitator catalogs this site at /discovery/resources after the
+	 * first successful payment. Pass discovery metadata per-call via
+	 * `enforce(request, { discovery: {...} })`.
+	 */
+	bazaar?: boolean;
 	/** Payment scheme (defaults to "exact") */
 	scheme?: string;
 	/** Maximum timeout for payment signatures in seconds (defaults to 60) */
@@ -81,6 +92,11 @@ export interface EnforceOptions {
 	description?: string;
 	/** MIME type hint for the resource */
 	mimeType?: string;
+	/**
+	 * Per-resource extensions (e.g. Bazaar discovery metadata).
+	 * Typically built with `declareDiscoveryExtension()` from @x402/extensions/bazaar.
+	 */
+	extensions?: Record<string, unknown>;
 }
 
 /**

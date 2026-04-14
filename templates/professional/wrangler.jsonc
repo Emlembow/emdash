@@ -1,0 +1,36 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "myepicportfolio",
+	"compatibility_date": "2026-04-11",
+	"compatibility_flags": ["nodejs_compat"],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "myepicportfolio",
+			"database_id": "8f7faa94-195f-46da-a21d-51e1e4e03e5d"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA",
+			"bucket_name": "myepicportfolio-media"
+		}
+	],
+	"observability": {
+		"logs": {
+			"enabled": true,
+			"invocation_logs": true
+		},
+		"traces": {}
+	},
+	"routes": [
+		{
+			"pattern": "myepicportfolio.com",
+			"custom_domain": true
+		},
+		{
+			"pattern": "www.myepicportfolio.com",
+			"custom_domain": true
+		}
+	]
+}

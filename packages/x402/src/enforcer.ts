@@ -31,12 +31,73 @@ let _resourceServer: x402ResourceServer | null = null;
 let _initPromise: Promise<void> | null = null;
 
 /**
+ * Build CDP auth headers using ES256 JWT.
+ * Uses @coinbase/cdp-sdk's generateJwt when CDP credentials are configured.
+ */
+async function buildCdpAuthHeaders(
+	keyId: string,
+	keySecret: string,
+	facilitatorUrl: string,
+) {
+	const { generateJwt } = await import("@coinbase/cdp-sdk/auth");
+	const url = new URL(facilitatorUrl);
+	const host = url.host;
+	const basePath = url.pathname.replace(/\/$/, "");
+	const makeFor = async (method: string, subpath: string) => {
+		const token = await generateJwt({
+			apiKeyId: keyId,
+			apiKeySecret: keySecret,
+			requestMethod: method,
+			requestHost: host,
+			requestPath: `${basePath}/${subpath}`,
+		});
+		return { Authorization: `Bearer ${token}` };
+	};
+	return async () => ({
+		verify: await makeFor("POST", "verify"),
+		settle: await makeFor("POST", "settle"),
+		supported: await makeFor("GET", "supported"),
+	});
+}
+
+/**
  * Get or create the x402ResourceServer singleton.
  */
 async function getResourceServer(config: X402Config): Promise<x402ResourceServer> {
 	if (!_resourceServer) {
 		const facilitatorUrl = config.facilitatorUrl ?? DEFAULT_FACILITATOR_URL;
-		const facilitator = new HTTPFacilitatorClient({ url: facilitatorUrl });
+
+		const facilitatorOptions: {
+			url: string;
+			createAuthHeaders?: () => Promise<{
+				verify: Record<string, string>;
+				settle: Record<string, string>;
+				supported: Record<string, string>;
+			}>;
+		} = { url: facilitatorUrl };
+
+		// Resolve CDP credentials from config or env (Node/Cloudflare)
+		const envKeyId =
+			(typeof process !== "undefined" && process.env?.CDP_API_KEY_ID) ||
+			// @ts-ignore — import.meta.env exists at runtime in Vite
+			(typeof import.meta !== "undefined" && import.meta.env?.CDP_API_KEY_ID);
+		const envKeySecret =
+			(typeof process !== "undefined" && process.env?.CDP_API_KEY_SECRET) ||
+			// @ts-ignore — import.meta.env exists at runtime in Vite
+			(typeof import.meta !== "undefined" && import.meta.env?.CDP_API_KEY_SECRET);
+
+		const cdpKeyId = config.cdpApiKeyId || envKeyId;
+		const cdpKeySecret = config.cdpApiKeySecret || envKeySecret;
+
+		if (cdpKeyId && cdpKeySecret) {
+			facilitatorOptions.createAuthHeaders = await buildCdpAuthHeaders(
+				cdpKeyId,
+				cdpKeySecret,
+				facilitatorUrl,
+			);
+		}
+
+		const facilitator = new HTTPFacilitatorClient(facilitatorOptions);
 		const server = new x402ResourceServer(facilitator);
 
 		// Register EVM scheme (default)
@@ -47,6 +108,16 @@ async function getResourceServer(config: X402Config): Promise<x402ResourceServer
 				server.register("eip155:*" as `${string}:${string}`, evmScheme);
 			} catch {
 				// @x402/evm not installed -- skip EVM support
+			}
+		}
+
+		// Register Bazaar discovery extension (opt-in)
+		if (config.bazaar) {
+			try {
+				const bazaarMod = await import("@x402/extensions/bazaar");
+				server.registerExtension(bazaarMod.bazaarResourceServerExtension);
+			} catch {
+				// @x402/extensions not installed — skip Bazaar discovery
 			}
 		}
 
@@ -74,20 +145,33 @@ async function getResourceServer(config: X402Config): Promise<x402ResourceServer
 }
 
 /**
- * Check if a request is from a bot using Cloudflare Bot Management.
- * Returns true if the request is likely from a bot, false otherwise.
- * When bot management data is unavailable (local dev, non-CF deployment),
- * returns false (treat as human).
+ * Known AI scraper/bot User-Agent patterns.
+ * Used as fallback when Cloudflare Bot Management scores are unavailable.
+ */
+const BOT_UA_PATTERNS =
+	/GPTBot|ChatGPT|ClaudeBot|Claude-Web|Anthropic|CCBot|Google-Extended|Bytespider|Amazonbot|FacebookBot|Applebot-Extended|PerplexityBot|YouBot|Diffbot|Scrapy|PetalBot|Seekport|DataForSeoBot|Semrush|AhrefsBot|DotBot|Barkrowler|MJ12bot/i;
+
+/**
+ * Check if a request is from a bot.
+ * Uses Cloudflare Bot Management score when available, falls back to
+ * User-Agent pattern matching for known AI scrapers and crawlers.
  */
 function isBot(request: Request, threshold: number): boolean {
-	// Cloudflare Workers expose cf properties on the request
+	// Try Cloudflare Bot Management score first
 	const cf: unknown = Reflect.get(request, "cf");
-	if (cf == null || typeof cf !== "object") return false;
-	const bm: unknown = Reflect.get(cf, "botManagement");
-	if (bm == null || typeof bm !== "object") return false;
-	const score: unknown = Reflect.get(bm, "score");
-	if (typeof score !== "number") return false;
-	return score < threshold;
+	if (cf != null && typeof cf === "object") {
+		const bm: unknown = Reflect.get(cf, "botManagement");
+		if (bm != null && typeof bm === "object") {
+			const score: unknown = Reflect.get(bm, "score");
+			if (typeof score === "number") {
+				return score < threshold;
+			}
+		}
+	}
+
+	// Fallback: User-Agent pattern matching
+	const ua = request.headers.get("user-agent") ?? "";
+	return BOT_UA_PATTERNS.test(ua);
 }
 
 /**
@@ -100,8 +184,13 @@ export function createEnforcer(config: X402Config): X402Enforcer {
 	return {
 		async enforce(request: Request, options?: EnforceOptions): Promise<Response | EnforceResult> {
 			// In botOnly mode, skip enforcement for humans
-			if (config.botOnly && !isBot(request, botScoreThreshold)) {
-				return { paid: false, skipped: true, responseHeaders: {} };
+			if (config.botOnly) {
+				const ua = request.headers.get("user-agent") ?? "";
+				const detected = isBot(request, botScoreThreshold);
+				console.log(`[x402] UA="${ua}" isBot=${detected}`);
+				if (!detected) {
+					return { paid: false, skipped: true, responseHeaders: {} };
+				}
 			}
 
 			const server = await getResourceServer(config);
@@ -124,6 +213,8 @@ export function createEnforcer(config: X402Config): X402Enforcer {
 				price: normalizePrice(price),
 				network,
 				maxTimeoutSeconds,
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				...(options?.extensions ? { extensions: options.extensions as any } : {}),
 			};
 
 			const url = new URL(request.url);

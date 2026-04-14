@@ -1,0 +1,100 @@
+---
+import { getEmDashEntry } from "emdash";
+import { PortableText } from "emdash/ui";
+import Base from "../layouts/Base.astro";
+
+const { x402 } = Astro.locals as { x402?: any };
+if (x402) {
+	const result = await x402.enforce(Astro.request);
+	if (result instanceof Response) return result;
+	x402.applyHeaders(result, Astro.response);
+}
+
+const { slug } = Astro.params;
+const { entry, cacheHint } = await getEmDashEntry("pages", slug!);
+
+if (!entry) {
+	return new Response(null, { status: 404 });
+}
+
+Astro.cache.set(cacheHint);
+---
+
+<Base
+	title={entry.data.title ?? "Page"}
+	content={{ collection: "pages", id: entry.data.id, slug: entry.data.slug }}
+>
+	<article class="page">
+		<a href="/" class="back-link">&larr; Back</a>
+		<h1 class="page-title">{entry.data.title}</h1>
+		{entry.data.content && (
+			<div class="page-content">
+				<PortableText value={entry.data.content} />
+			</div>
+		)}
+	</article>
+</Base>
+
+<style>
+	.page {
+		position: relative;
+		z-index: 1;
+		max-width: 720px;
+		margin: 0 auto;
+		padding: 4rem 1.5rem;
+	}
+
+	.back-link {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		padding: 3px 8px;
+		background: var(--surface-300);
+		border-radius: var(--radius-pill);
+		margin-bottom: 2rem;
+		transition: color 150ms ease, background 150ms ease;
+		letter-spacing: -0.01em;
+	}
+
+	.back-link:hover {
+		color: var(--accent-hover);
+		background: var(--surface-500);
+	}
+
+	.page-title {
+		font-family: var(--font-display);
+		font-size: 3rem;
+		font-weight: 500;
+		line-height: 1.1;
+		letter-spacing: -0.025em;
+		color: var(--text-primary);
+		margin-bottom: 2rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 1px solid var(--border-primary);
+	}
+
+	.page-content {
+		font-family: var(--font-body);
+		font-size: 1.2rem;
+		line-height: 1.55;
+		color: var(--text-secondary);
+		font-feature-settings: "cswh" on, "ss01" on;
+	}
+
+	.page-content :global(p + p) {
+		margin-top: 1.25rem;
+	}
+
+	.page-content :global(h2) {
+		font-family: var(--font-display);
+		font-size: 1.75rem;
+		font-weight: 500;
+		letter-spacing: -0.0125em;
+		color: var(--text-primary);
+		margin-top: 2.5rem;
+		margin-bottom: 1rem;
+	}
+</style>

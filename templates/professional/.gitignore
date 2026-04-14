@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+data.db
+data.db-shm
+data.db-wal
+uploads/
+.env
+.env.local
+.env.production

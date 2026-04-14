@@ -1,0 +1,323 @@
+---
+import { getMenu, getSiteSettings } from "emdash";
+import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from "emdash/ui";
+import { createPublicPageContext } from "emdash/page";
+
+interface Props {
+	title?: string;
+	description?: string;
+	image?: string;
+	type?: "website" | "article";
+	content?: { collection: string; id: string; slug?: string | null };
+}
+
+const { title, description, image, type = "website", content } = Astro.props;
+const settings = await getSiteSettings();
+const siteTitle = settings?.title || "Portfolio";
+const fullTitle = title ? `${title} — ${siteTitle}` : siteTitle;
+const siteDescription = settings?.tagline || "Professional Portfolio";
+
+const menu = await getMenu("primary");
+
+const pageCtx = createPublicPageContext({
+	Astro,
+	kind: content ? "content" : "custom",
+	pageType: type,
+	title: fullTitle,
+	pageTitle: title ?? siteTitle,
+	description: description || siteDescription,
+	canonical: Astro.url.href,
+	image,
+	seo: { ogImage: image },
+	content,
+	siteName: siteTitle,
+});
+
+const isLoggedIn = !!Astro.locals.user;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{fullTitle}</title>
+		<link rel="icon" type="image/png" href="/favicon.ico" />
+		<EmDashHead page={pageCtx} />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap"
+			rel="stylesheet"
+		/>
+		<script is:inline>
+			(function () {
+				try {
+					var stored = localStorage.getItem("theme");
+					var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+					document.documentElement.setAttribute("data-theme", theme);
+				} catch (e) {
+					document.documentElement.setAttribute("data-theme", "light");
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<EmDashBodyStart page={pageCtx} />
+		{isLoggedIn && (
+			<a href="/_emdash/admin" class="admin-link">Admin</a>
+		)}
+
+		<button
+			id="theme-toggle"
+			class="theme-toggle"
+			type="button"
+			aria-label="Toggle dark mode"
+			title="Toggle theme"
+		>
+			<svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+			<svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+		</button>
+
+		<slot />
+
+		<EmDashBodyEnd page={pageCtx} />
+
+		<script is:inline>
+			(function () {
+				var btn = document.getElementById("theme-toggle");
+				if (!btn) return;
+				btn.addEventListener("click", function () {
+					var current = document.documentElement.getAttribute("data-theme") || "light";
+					var next = current === "dark" ? "light" : "dark";
+					document.documentElement.setAttribute("data-theme", next);
+					try { localStorage.setItem("theme", next); } catch (e) {}
+				});
+			})();
+		</script>
+	</body>
+</html>
+
+<style is:global>
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0;
+	}
+
+	:root {
+		/* Typography — three voices: gothic display, serif body, mono code */
+		--font-display: "Space Grotesk", "Inter Tight", system-ui, "Helvetica Neue", Arial, sans-serif;
+		--font-body: "Fraunces", "Iowan Old Style", "Palatino Linotype", "URW Palladio L", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+		--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+		--font-ui: system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+		/* Surfaces — warm cream scale */
+		--surface-100: #f7f7f4;
+		--surface-200: #f2f1ed;
+		--surface-300: #ebeae5;
+		--surface-400: #e6e5e0;
+		--surface-500: #e1e0db;
+
+		/* Canonical roles */
+		--bg-primary: #f2f1ed;
+		--bg-secondary: #e6e5e0;
+		--bg-tertiary: #ebeae5;
+
+		/* Text — warm near-black with yellow undertone */
+		--text-primary: #26251e;
+		--text-secondary: rgba(38, 37, 30, 0.72);
+		--text-muted: rgba(38, 37, 30, 0.55);
+		--text-faint: rgba(38, 37, 30, 0.4);
+
+		/* Accents */
+		--accent: #f54e00;
+		--accent-hover: #cf2d56;
+		--accent-gold: #c08532;
+
+		/* Semantic */
+		--color-error: #cf2d56;
+		--color-success: #1f8a65;
+
+		/* Timeline / feature colors */
+		--color-thinking: #dfa88f;
+		--color-grep: #9fc9a2;
+		--color-read: #9fbbe0;
+		--color-edit: #c0a8dd;
+
+		/* Borders — oklab at various alphas */
+		--border-primary: oklab(0.263084 -0.00230259 0.0124794 / 0.1);
+		--border-medium: oklab(0.263084 -0.00230259 0.0124794 / 0.2);
+		--border-strong: rgba(38, 37, 30, 0.55);
+		--border-solid: #26251e;
+
+		/* Shadows — diffused atmospheric */
+		--shadow-ambient: rgba(0, 0, 0, 0.02) 0px 0px 16px, rgba(0, 0, 0, 0.008) 0px 0px 8px;
+		--shadow-card:
+			rgba(0, 0, 0, 0.14) 0px 28px 70px, rgba(0, 0, 0, 0.1) 0px 14px 32px,
+			oklab(0.263084 -0.00230259 0.0124794 / 0.1) 0px 0px 0px 1px;
+		--shadow-focus: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
+		/* Radii */
+		--radius-sm: 4px;
+		--radius-md: 8px;
+		--radius-lg: 10px;
+		--radius-pill: 9999px;
+
+		--max-width: 1200px;
+
+		color-scheme: light;
+	}
+
+	[data-theme="dark"] {
+		/* Surfaces — warm near-black scale (inverted but preserves yellow undertone) */
+		--surface-100: #141310;
+		--surface-200: #1a1914;
+		--surface-300: #22211b;
+		--surface-400: #2a2923;
+		--surface-500: #33312a;
+
+		--bg-primary: #1a1914;
+		--bg-secondary: #2a2923;
+		--bg-tertiary: #22211b;
+
+		/* Text — warm cream with yellow undertone */
+		--text-primary: #f2f1ed;
+		--text-secondary: rgba(242, 241, 237, 0.72);
+		--text-muted: rgba(242, 241, 237, 0.55);
+		--text-faint: rgba(242, 241, 237, 0.38);
+
+		/* Borders — oklab with light tone at various alphas */
+		--border-primary: oklab(0.95 -0.0023 0.0125 / 0.1);
+		--border-medium: oklab(0.95 -0.0023 0.0125 / 0.2);
+		--border-strong: rgba(242, 241, 237, 0.5);
+		--border-solid: #f2f1ed;
+
+		/* Shadows — deeper blacks in dark mode for atmospheric lift */
+		--shadow-ambient: rgba(0, 0, 0, 0.25) 0px 0px 16px, rgba(0, 0, 0, 0.15) 0px 0px 8px;
+		--shadow-card:
+			rgba(0, 0, 0, 0.5) 0px 28px 70px, rgba(0, 0, 0, 0.35) 0px 14px 32px,
+			oklab(0.95 -0.0023 0.0125 / 0.08) 0px 0px 0px 1px;
+		--shadow-focus: rgba(0, 0, 0, 0.35) 0px 4px 12px;
+
+		color-scheme: dark;
+	}
+
+	html {
+		scroll-behavior: smooth;
+		background: var(--bg-primary);
+	}
+
+	body {
+		font-family: var(--font-body);
+		font-size: 1.08rem;
+		line-height: 1.6;
+		color: var(--text-secondary);
+		background: var(--bg-primary);
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+		font-feature-settings: "cswh" on, "ss01" on;
+		min-height: 100vh;
+		transition: background-color 200ms ease, color 200ms ease;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-family: var(--font-display);
+		line-height: 1.1;
+		font-weight: 500;
+		color: var(--text-primary);
+		letter-spacing: -0.025em;
+	}
+
+	h1 { letter-spacing: -0.03em; }
+	h2 { letter-spacing: -0.02em; }
+	h3 { letter-spacing: -0.0125em; }
+	h4 { letter-spacing: -0.005em; }
+
+	ul, ol {
+		list-style: none;
+	}
+
+	::selection {
+		background: var(--accent);
+		color: #fff;
+	}
+
+	.admin-link {
+		position: fixed;
+		bottom: 16px;
+		left: 16px;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--text-faint);
+		background: var(--surface-300);
+		border: 1px solid var(--border-primary);
+		padding: 4px 10px;
+		border-radius: var(--radius-pill);
+		text-decoration: none;
+		z-index: 100;
+		transition: color 150ms ease, box-shadow 200ms ease;
+	}
+
+	.admin-link:hover {
+		color: var(--accent-hover);
+		box-shadow: var(--shadow-focus);
+	}
+
+	.theme-toggle {
+		position: fixed;
+		top: 16px;
+		right: 16px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		padding: 0;
+		background: var(--surface-300);
+		border: 1px solid var(--border-primary);
+		border-radius: var(--radius-pill);
+		color: var(--text-muted);
+		cursor: pointer;
+		z-index: 100;
+		transition: color 150ms ease, box-shadow 200ms ease, background 150ms ease;
+	}
+
+	.theme-toggle:hover {
+		color: var(--accent-hover);
+		box-shadow: var(--shadow-focus);
+	}
+
+	.theme-toggle .icon-sun,
+	.theme-toggle .icon-moon {
+		display: none;
+	}
+
+	[data-theme="light"] .theme-toggle .icon-moon,
+	[data-theme="dark"] .theme-toggle .icon-sun {
+		display: block;
+	}
+
+	@media print {
+		body {
+			background: white;
+			color: #111;
+		}
+		.admin-link, .theme-toggle {
+			display: none !important;
+		}
+	}
+</style>

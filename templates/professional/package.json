@@ -1,0 +1,40 @@
+{
+	"name": "myepicportfolio",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"emdash": {
+		"seed": "seed/seed.json"
+	},
+	"scripts": {
+		"dev": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"deploy": "astro build && wrangler deploy",
+		"seed": "emdash seed",
+		"seed:remote": "emdash seed --remote",
+		"typecheck": "astro check"
+	},
+	"dependencies": {
+		"@astrojs/cloudflare": "catalog:",
+		"@astrojs/react": "catalog:",
+		"@coinbase/cdp-sdk": "^1.47.0",
+		"@emdash-cms/cloudflare": "workspace:*",
+		"@emdash-cms/plugin-chat": "workspace:*",
+		"@emdash-cms/x402": "workspace:*",
+		"@x402/extensions": "^2.8.0",
+		"astro": "catalog:",
+		"emdash": "workspace:*",
+		"react": "catalog:",
+		"react-dom": "catalog:"
+	},
+	"devDependencies": {
+		"@astrojs/check": "catalog:",
+		"@cloudflare/workers-types": "catalog:",
+		"@x402/fetch": "^2.9.0",
+		"bs58": "^6.0.0",
+		"tsx": "^4.21.0",
+		"undici": "^8.0.2",
+		"wrangler": "catalog:"
+	}
+}

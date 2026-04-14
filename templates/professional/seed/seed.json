@@ -1,0 +1,1198 @@
+{
+	"$schema": "https://emdashcms.com/seed.schema.json",
+	"version": "1",
+	"meta": {
+		"name": "Mike Lembo Portfolio",
+		"description": "Professional portfolio — myepicportfolio.com",
+		"author": "Mike Lembo"
+	},
+
+	"settings": {
+		"title": "Mike Lembo",
+		"tagline": "Product Manager"
+	},
+
+	"collections": [
+		{
+			"slug": "positions",
+			"label": "Positions",
+			"labelSingular": "Position",
+			"description": "Work experience and career history",
+			"icon": "briefcase",
+			"supports": ["drafts", "revisions", "search"],
+			"urlPattern": "/",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Job Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "company",
+					"label": "Company",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "location",
+					"label": "Location",
+					"type": "string"
+				},
+				{
+					"slug": "start_date",
+					"label": "Start Date",
+					"type": "string"
+				},
+				{
+					"slug": "end_date",
+					"label": "End Date",
+					"type": "string"
+				},
+				{
+					"slug": "technologies",
+					"label": "Technologies",
+					"type": "json"
+				},
+				{
+					"slug": "content",
+					"label": "Description",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "url",
+					"label": "Company URL",
+					"type": "string"
+				},
+				{
+					"slug": "sort_order",
+					"label": "Sort Order",
+					"type": "integer"
+				}
+			]
+		},
+		{
+			"slug": "education",
+			"label": "Education",
+			"labelSingular": "Education",
+			"description": "Education and academic credentials",
+			"icon": "graduation-cap",
+			"supports": ["drafts", "revisions"],
+			"urlPattern": "/",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Degree / Program",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "institution",
+					"label": "Institution",
+					"type": "string",
+					"required": true
+				},
+				{
+					"slug": "field",
+					"label": "Field of Study",
+					"type": "string"
+				},
+				{
+					"slug": "start_date",
+					"label": "Start Date",
+					"type": "string"
+				},
+				{
+					"slug": "end_date",
+					"label": "End Date",
+					"type": "string"
+				},
+				{
+					"slug": "content",
+					"label": "Description",
+					"type": "portableText"
+				},
+				{
+					"slug": "sort_order",
+					"label": "Sort Order",
+					"type": "integer"
+				}
+			]
+		},
+		{
+			"slug": "certifications",
+			"label": "Certifications",
+			"labelSingular": "Certification",
+			"description": "Professional certifications and credentials",
+			"icon": "award",
+			"supports": ["drafts", "revisions"],
+			"urlPattern": "/",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Certification Name",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "issuer",
+					"label": "Issuing Organization",
+					"type": "string"
+				},
+				{
+					"slug": "date_earned",
+					"label": "Date Earned",
+					"type": "string"
+				},
+				{
+					"slug": "url",
+					"label": "Verification URL",
+					"type": "string"
+				},
+				{
+					"slug": "sort_order",
+					"label": "Sort Order",
+					"type": "integer"
+				}
+			]
+		},
+		{
+			"slug": "endorsements",
+			"label": "Endorsements",
+			"labelSingular": "Endorsement",
+			"description": "Testimonials and professional references",
+			"icon": "quote",
+			"supports": ["drafts", "revisions"],
+			"urlPattern": "/",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Person's Name",
+					"type": "string",
+					"required": true
+				},
+				{
+					"slug": "role",
+					"label": "Their Title",
+					"type": "string"
+				},
+				{
+					"slug": "company",
+					"label": "Their Company",
+					"type": "string"
+				},
+				{
+					"slug": "relationship",
+					"label": "Relationship",
+					"type": "string"
+				},
+				{
+					"slug": "content",
+					"label": "Endorsement",
+					"type": "portableText"
+				},
+				{
+					"slug": "url",
+					"label": "LinkedIn URL",
+					"type": "string"
+				},
+				{
+					"slug": "featured_image",
+					"label": "Photo",
+					"type": "image"
+				},
+				{
+					"slug": "sort_order",
+					"label": "Sort Order",
+					"type": "integer"
+				}
+			]
+		},
+		{
+			"slug": "posts",
+			"label": "Posts",
+			"labelSingular": "Post",
+			"description": "Blog posts and articles",
+			"icon": "file-text",
+			"supports": ["drafts", "revisions", "search", "seo"],
+			"urlPattern": "/blog/{slug}",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "featured_image",
+					"label": "Featured Image",
+					"type": "image"
+				},
+				{
+					"slug": "excerpt",
+					"label": "Excerpt",
+					"type": "text",
+					"searchable": true
+				},
+				{
+					"slug": "content",
+					"label": "Content",
+					"type": "portableText",
+					"searchable": true
+				}
+			]
+		},
+		{
+			"slug": "projects",
+			"label": "Projects",
+			"labelSingular": "Project",
+			"description": "Personal projects and side work",
+			"icon": "rocket",
+			"supports": ["drafts", "revisions", "search", "seo"],
+			"urlPattern": "/projects/{slug}",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "featured_image",
+					"label": "Image",
+					"type": "image"
+				},
+				{
+					"slug": "summary",
+					"label": "Summary",
+					"type": "text",
+					"searchable": true
+				},
+				{
+					"slug": "content",
+					"label": "Description",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "url",
+					"label": "Project URL",
+					"type": "string"
+				},
+				{
+					"slug": "github_url",
+					"label": "GitHub URL",
+					"type": "string"
+				},
+				{
+					"slug": "sort_order",
+					"label": "Sort Order",
+					"type": "integer"
+				}
+			]
+		},
+		{
+			"slug": "pages",
+			"label": "Pages",
+			"labelSingular": "Page",
+			"supports": ["drafts", "revisions", "search"],
+			"urlPattern": "/{slug}",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "content",
+					"label": "Content",
+					"type": "portableText",
+					"searchable": true
+				}
+			]
+		}
+	],
+
+	"taxonomies": [
+		{
+			"name": "tag",
+			"label": "Tags",
+			"labelSingular": "Tag",
+			"hierarchical": false,
+			"collections": ["posts"],
+			"terms": [
+				{ "slug": "product-management", "label": "Product Management" },
+				{ "slug": "leadership", "label": "Leadership" },
+				{ "slug": "technology", "label": "Technology" },
+				{ "slug": "career", "label": "Career" }
+			]
+		},
+		{
+			"name": "skill",
+			"label": "Skills",
+			"labelSingular": "Skill",
+			"hierarchical": false,
+			"collections": ["positions"],
+			"terms": [
+				{ "slug": "product-strategy", "label": "Product Strategy" },
+				{ "slug": "b2b-saas", "label": "B2B SaaS" },
+				{ "slug": "public-sector", "label": "Public Sector" },
+				{ "slug": "digital-assets", "label": "Digital Assets" },
+				{ "slug": "agile", "label": "Agile" },
+				{ "slug": "python", "label": "Python" },
+				{ "slug": "data-analytics", "label": "Data Analytics" },
+				{ "slug": "zero-to-one", "label": "0-to-1 Products" }
+			]
+		}
+	],
+
+	"menus": [
+		{
+			"name": "primary",
+			"label": "Primary Navigation",
+			"items": [
+				{ "type": "custom", "label": "Experience", "url": "/#experience" },
+				{ "type": "custom", "label": "Projects", "url": "/#projects" },
+				{ "type": "custom", "label": "Education", "url": "/#education" },
+				{ "type": "custom", "label": "Endorsements", "url": "/#endorsements" },
+				{ "type": "custom", "label": "Blog", "url": "/blog" }
+			]
+		}
+	],
+
+	"sections": [
+		{
+			"slug": "hero",
+			"title": "Hero",
+			"content": [
+				{
+					"_type": "block",
+					"style": "normal",
+					"children": [
+						{
+							"_type": "span",
+							"text": "Product leader with 15 years of experience scaling B2B SaaS platforms and public-sector solutions. Proven record of building 0-to-1 products, shaping long-term strategy, and driving meaningful revenue growth."
+						}
+					]
+				},
+				{
+					"_type": "block",
+					"style": "normal",
+					"children": [
+						{
+							"_type": "span",
+							"text": "15 years of experience across Digital Assets, Fintech, RegTech, and Government."
+						}
+					]
+				}
+			]
+		}
+	],
+
+	"content": {
+		"positions": [
+			{
+				"id": "cointracker",
+				"slug": "cointracker",
+				"status": "published",
+				"data": {
+					"title": "Institutional Product Lead",
+					"company": "CoinTracker",
+					"location": "San Francisco, CA",
+					"start_date": "2025-01",
+					"end_date": "",
+					"technologies": [
+						"Product Strategy",
+						"RegTech",
+						"Tax Compliance",
+						"B2B SaaS",
+						"0-to-1 Products"
+					],
+					"url": "https://www.cointracker.io/",
+					"sort_order": 1,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Led the 0-to-1 build of crypto tax infrastructure, supporting 16 brokers in the first year 1099-DA forms were ever distributed to users."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"skill": ["product-strategy", "b2b-saas", "digital-assets", "zero-to-one"]
+				}
+			},
+			{
+				"id": "bitgo",
+				"slug": "bitgo",
+				"status": "published",
+				"data": {
+					"title": "Staff Product Manager",
+					"company": "BitGo",
+					"location": "San Francisco, CA",
+					"start_date": "2024-09",
+					"end_date": "2025-06",
+					"technologies": [
+						"Product Strategy",
+						"Digital Assets",
+						"Global Expansion",
+						"Prime Brokerage"
+					],
+					"url": "https://www.bitgo.com",
+					"sort_order": 2,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Directed end-to-end product strategy for the off-chain applications platform, positioning BitGo as the global standard for secure digital-asset custody."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Led APAC & EMEA expansion by aligning sales, ops, marketing, legal, and engineering to stand up regional business units."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"skill": ["product-strategy", "digital-assets"]
+				}
+			},
+			{
+				"id": "taxbit",
+				"slug": "taxbit",
+				"status": "published",
+				"data": {
+					"title": "Staff Product Manager (Public Sector)",
+					"company": "TaxBit",
+					"location": "San Francisco, CA",
+					"start_date": "2022-02",
+					"end_date": "2024-04",
+					"technologies": [
+						"Public Sector",
+						"FedRAMP/FISMA",
+						"Blockchain",
+						"Product Strategy",
+						"Revenue Growth"
+					],
+					"url": "https://www.taxbit.com",
+					"sort_order": 3,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Built Public Sector business from zero, scaling annual revenue from $150K to $5M+ (30% of company revenue) within 24 months."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Conceived, launched, and scaled the first tax-audit platform integrating blockchain, exchange, DeFi, and off-chain data, cutting auditor case processing time by 92%."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Led FedRAMP/FISMA Authority to Operate (ATO) compliance process. Won C-suite approval for multi-million-dollar product bets through robust business cases."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Instituted an experimentation-first culture with defined KPIs and continuous discovery."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"skill": ["product-strategy", "public-sector", "digital-assets", "zero-to-one"]
+				}
+			},
+			{
+				"id": "excella",
+				"slug": "excella",
+				"status": "published",
+				"data": {
+					"title": "Senior Product Manager",
+					"company": "Excella Consulting",
+					"location": "Washington, DC",
+					"start_date": "2017-03",
+					"end_date": "2022-02",
+					"technologies": [
+						"Public Sector SaaS",
+						"Agile Leadership",
+						"CMS Development",
+						"Portfolio Management",
+						"Python"
+					],
+					"url": "https://www.excella.com",
+					"sort_order": 4,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Modernized the HHS-OIG hotline, reducing case triage time 50% and spam 90%."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Delivered a government-compliant CMS from 0 to 1; today it powers 9,000+ pages at oig.hhs.gov and frees web teams to publish without code."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Created a portfolio of public-sector SaaS products by spotting unmet needs and sizing markets. Managed PMs and engineers; owned portfolio planning, release management, agile ceremonies, and automated Python acceptance testing."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Oversaw contract budgeting and financial planning."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"skill": [
+						"product-strategy",
+						"public-sector",
+						"b2b-saas",
+						"agile",
+						"python",
+						"zero-to-one"
+					]
+				}
+			},
+			{
+				"id": "appteon",
+				"slug": "appteon",
+				"status": "published",
+				"data": {
+					"title": "Product Manager",
+					"company": "Appteon Inc",
+					"location": "Washington, DC",
+					"start_date": "2015-06",
+					"end_date": "2017-03",
+					"technologies": [
+						"Cloud-Native",
+						"Data Processing",
+						"Python",
+						"Agile Delivery",
+						"User Training"
+					],
+					"url": "https://www.appteon.com",
+					"sort_order": 5,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Decreased Department of Labor data-processing time from 12 hours to 5 minutes by launching a cloud-native grants-performance reporting platform."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Designed a Python-based data-generation suite producing hundreds of thousands of production-quality records. Led national training webinars to onboard users; maintained prioritized roadmap and steered agile delivery."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"skill": ["public-sector", "python", "agile"]
+				}
+			},
+			{
+				"id": "deloitte",
+				"slug": "deloitte",
+				"status": "published",
+				"data": {
+					"title": "Senior Business Analyst",
+					"company": "Deloitte",
+					"location": "Washington, DC",
+					"start_date": "2014-07",
+					"end_date": "2015-06",
+					"technologies": [
+						"IRS Modernization",
+						"Database Migration",
+						"UML",
+						"Technical Documentation"
+					],
+					"sort_order": 6,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Supported IRS modernization (CADE 2), migrating 1960s flat-file systems to relational databases."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Authored the UML-based Use-Case Development Guide adopted by a 52-person requirements team."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"skill": ["public-sector", "data-analytics"]
+				}
+			},
+			{
+				"id": "booz-allen",
+				"slug": "booz-allen",
+				"status": "published",
+				"data": {
+					"title": "Business Analyst",
+					"company": "Booz Allen Hamilton",
+					"location": "Washington, DC",
+					"start_date": "2010-07",
+					"end_date": "2014-07",
+					"technologies": [
+						"Business Process Modeling",
+						"Stakeholder Alignment",
+						"Affordable Care Act",
+						"Requirements Analysis"
+					],
+					"sort_order": 7,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Translated Affordable Care Act mandates into business-process models, guiding nationwide stakeholder alignment across 150+ participants."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Produced multidimensional process models and requirements supporting new tax credits and compliance initiatives."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"skill": ["public-sector", "data-analytics", "agile"]
+				}
+			},
+			{
+				"id": "jnj",
+				"slug": "jnj",
+				"status": "published",
+				"data": {
+					"title": "Data Analyst Intern",
+					"company": "Johnson & Johnson",
+					"location": "Fort Washington, PA",
+					"start_date": "2009-03",
+					"end_date": "2009-08",
+					"technologies": [
+						"Data Analytics",
+						"Portfolio Management",
+						"KPI Reporting",
+						"Pricing Models"
+					],
+					"sort_order": 8,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Built an $84M commodity-portfolio management application and automated KPI reporting, cutting processing time from three days to under one hour."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Developed recall-impact analytics and pricing models driving revenue optimization and risk mitigation."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"skill": ["data-analytics"]
+				}
+			}
+		],
+		"education": [
+			{
+				"id": "rit",
+				"slug": "rit",
+				"status": "published",
+				"data": {
+					"title": "Bachelor of Science, Management Information Systems",
+					"institution": "Rochester Institute of Technology",
+					"field": "Management Information Systems",
+					"end_date": "2010",
+					"sort_order": 1,
+					"content": []
+				}
+			},
+			{
+				"id": "stanford-ml",
+				"slug": "stanford-ml",
+				"status": "published",
+				"data": {
+					"title": "Supervised Machine Learning: Regression and Classification",
+					"institution": "Stanford Online / DeepLearning.AI",
+					"field": "Machine Learning",
+					"end_date": "2024",
+					"sort_order": 2,
+					"content": []
+				}
+			}
+		],
+		"certifications": [
+			{
+				"id": "a-csm",
+				"slug": "a-csm",
+				"status": "published",
+				"data": {
+					"title": "Advanced Certified Scrum Master (A-CSM)",
+					"issuer": "Scrum Alliance",
+					"sort_order": 1
+				}
+			},
+			{
+				"id": "a-cspo",
+				"slug": "a-cspo",
+				"status": "published",
+				"data": {
+					"title": "Advanced Certified Scrum Product Owner (A-CSPO)",
+					"issuer": "Scrum Alliance",
+					"sort_order": 2
+				}
+			},
+			{
+				"id": "csm",
+				"slug": "csm",
+				"status": "published",
+				"data": {
+					"title": "Certified Scrum Master (CSM)",
+					"issuer": "Scrum Alliance",
+					"sort_order": 3
+				}
+			},
+			{
+				"id": "cspo",
+				"slug": "cspo",
+				"status": "published",
+				"data": {
+					"title": "Certified Scrum Product Owner (CSPO)",
+					"issuer": "Scrum Alliance",
+					"sort_order": 4
+				}
+			},
+			{
+				"id": "icagile",
+				"slug": "icagile",
+				"status": "published",
+				"data": {
+					"title": "Certified Professional \u2014 Agile Testing & Test Automation",
+					"issuer": "ICAgile",
+					"sort_order": 5
+				}
+			},
+			{
+				"id": "itil",
+				"slug": "itil",
+				"status": "published",
+				"data": {
+					"title": "ITIL Foundation",
+					"issuer": "Axelos",
+					"sort_order": 6
+				}
+			}
+		],
+		"endorsements": [
+			{
+				"id": "pavel-astakhov",
+				"slug": "pavel-astakhov",
+				"status": "published",
+				"data": {
+					"title": "Pavel Astakhov",
+					"role": "Director of Product",
+					"company": "BitGo",
+					"relationship": "Pavel managed Mike directly",
+					"url": "https://www.linkedin.com/in/pavel-astakhov/",
+					"sort_order": 1,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "I highly recommend Mike for his outstanding contributions as a Product Lead during our time together at BitGo. As Director of Product for Prime, I had the privilege of hiring Mike to lead Go Accounts which was one of our most strategic areas and his impact was immediate and lasting."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Mike played a critical role in leading the international expansion of BitGo into new markets, notably Singapore, where he set the foundational framework that paved the way for broader growth into EMEA and LATAM regions. His ability to move quickly and operate hands-on was invaluable because he never waited for perfect conditions, but instead drove initiatives like standing up new trust structures and operationalizing Go Accounts across new tokens and chains in record time."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "In addition to his execution strength, Mike consistently brought creative ideas forward, helping us expand BitGo's support for a broader range of digital assets and enhancing the company's global competitiveness. His combination of thoughtful strategic planning and pragmatic, fast-moving delivery made him a critical part of our success."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Mike embodies the best traits of a high-impact product leader: innovative, action-oriented, and deeply committed to building lasting platforms. I would jump at the chance to work with him again."
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"id": "charlie-campbell",
+				"slug": "charlie-campbell",
+				"status": "published",
+				"data": {
+					"title": "Charlie Campbell",
+					"role": "Senior Product Manager",
+					"company": "BitGo",
+					"relationship": "Charlie worked with Mike on the same team",
+					"url": "https://www.linkedin.com/in/charlie-campbell-a9512882/",
+					"sort_order": 2,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Mike, or just 'Lembo' as I've come to know him, is an absolute pleasure to work with. His depth of knowledge is staggering, and yet he carries himself as the most approachable coworker you could wish for."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "He writes excellent documentation that captures the right level of detail while remaining easily readable, and his solutions are well-thought-out, scalable, and phased for achievable delivery. He is able to quickly adapt to changing resource constraints and ultimately deliver excellent products under significant duress."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "All of those are fantastic qualities for a product professional, but what makes Lembo truly shine is his ability to connect with teammates and bring levity to all manner of inhospitable situations. With Mike on the team, every obstacle is surmountable and even the war room is a pleasant place to find yourself. I would jump at the chance to work with him again in any capacity."
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"projects": [
+			{
+				"id": "vibe-dieting",
+				"slug": "vibe-dieting",
+				"status": "published",
+				"data": {
+					"title": "Vibe Dieting",
+					"summary": "A nutrition-tracking app built from hello world to production using Claude Code, proving that frontier LLMs can make macro tracking as easy as snapping a photo.",
+					"url": "https://vibedieting.xyz",
+					"github_url": "",
+					"sort_order": 1,
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Built a nutrition-tracking app from hello world to production using Claude Code, starting from a hypothesis that frontier LLMs can make macro tracking as easy as snapping a photo."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "The entire codebase was written through AI-assisted development, demonstrating how product managers can leverage tools like Claude Code to go from idea to shipped product without a traditional engineering team."
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"posts": [
+			{
+				"id": "building-zero-to-one",
+				"slug": "building-zero-to-one",
+				"status": "published",
+				"data": {
+					"title": "What I've Learned Building 0-to-1 Products",
+					"excerpt": "After building multiple products from scratch across fintech, govtech, and crypto, here are the patterns that consistently lead to success.",
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Every 0-to-1 product I've built has taught me something new, but the core patterns remain remarkably consistent. Whether it was building a government-compliant CMS that now powers 9,000+ pages or launching the first crypto tax-audit platform for federal agencies, the fundamentals haven't changed."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Start with the problem, not the solution" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "The most successful products I've shipped started with deep empathy for the user's pain. At TaxBit, I spent weeks shadowing IRS auditors before writing a single user story. That investment paid off\u2014we cut their case processing time by 92% because we understood exactly where the friction was."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Ship fast, learn faster" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Perfectionism is the enemy of 0-to-1. At Excella, we launched an MVP of the OIG hotline modernization in 8 weeks. It wasn't pretty, but it immediately reduced case triage time by 50%. That early validation gave us the political capital to invest in a full rebuild."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Revenue is the ultimate validation" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Building the public sector business at TaxBit from $150K to $5M+ in 24 months taught me that revenue growth is the clearest signal that you're solving a real problem. Vanity metrics are comforting but revenue keeps the lights on and earns you the right to keep building."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"tag": ["product-management", "leadership"]
+				}
+			},
+			{
+				"id": "vibe-coding-with-claude",
+				"slug": "vibe-coding-with-claude",
+				"status": "published",
+				"data": {
+					"title": "Vibe Coding: Building a Product with Claude Code",
+					"excerpt": "How I went from product manager to solo founder by building an entire app with AI-assisted development.",
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "After 15 years in product management, I decided to build something of my own. The twist? I used Claude Code to go from zero to a production nutrition-tracking app, writing nearly all the code through AI-assisted development."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Why vibe coding works for PMs" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Product managers already think in systems, user flows, and acceptance criteria. It turns out those skills translate perfectly to prompting an LLM to write code. Instead of writing specs for engineers, I'm writing specs for Claude\u2014and the feedback loop is measured in seconds, not sprint cycles."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "The hypothesis" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Vibe Dieting started with a simple hypothesis: frontier LLMs can make macro tracking as easy as snapping a photo of your food. No more searching databases, weighing portions, or logging individual ingredients. Just take a picture, confirm the AI's analysis, and move on with your day."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"tag": ["technology", "product-management"]
+				}
+			}
+		],
+		"pages": [
+			{
+				"id": "about",
+				"slug": "about",
+				"status": "published",
+				"data": {
+					"title": "About",
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "I'm a product leader with 15 years of experience scaling B2B SaaS platforms and public-sector solutions. I specialize in building 0-to-1 products, shaping long-term strategy, and driving meaningful revenue growth across digital assets, fintech, regtech, and government."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "I'm currently the Institutional Product Lead at CoinTracker, where I led the 0-to-1 build of crypto tax infrastructure supporting 16 brokers. Previously, I built the public sector business at TaxBit from $150K to $5M+ in 24 months, and delivered a government CMS that powers 9,000+ pages."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "I believe in shipping fast, learning from users, and letting revenue be the ultimate validator. When I'm not building products, I'm exploring how AI can transform everyday workflows\u2014most recently by building a nutrition-tracking app entirely with Claude Code."
+								}
+							]
+						}
+					]
+				}
+			}
+		]
+	}
+}

@@ -1,0 +1,625 @@
+---
+import { getEmDashCollection, getSection, getSiteSettings } from "emdash";
+import { PortableText } from "emdash/ui";
+import Base from "../layouts/Base.astro";
+import PositionCard from "../components/PositionCard.astro";
+import EducationCard from "../components/EducationCard.astro";
+import CertCard from "../components/CertCard.astro";
+import EndorsementCard from "../components/EndorsementCard.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { declareDiscoveryExtension } from "@x402/extensions/bazaar";
+
+// x402: bots pay $0.001 USDC, humans browse free. Bazaar discovery metadata attached.
+const { x402 } = Astro.locals as { x402?: any };
+if (x402) {
+	const result = await x402.enforce(Astro.request, {
+		description:
+			"Mike Lembo's professional portfolio homepage — 15 years of product management experience in digital assets, fintech, regtech, and government. Built on EmDash CMS (open-source Astro-native CMS). Includes an AI chat interface (OpenAI Responses API) to ask questions about Mike's background. Full HTML page with Person/FAQ JSON-LD schema and semantic sections for About, Experience, Projects, Education, Certifications, References.",
+		mimeType: "text/html",
+		extensions: declareDiscoveryExtension({
+			output: {
+				example:
+					"<html>Portfolio page with embedded Person JSON-LD schema, FAQPage schema, and semantic sections. Built on EmDash CMS with an AI chat widget (OpenAI Responses API) for interactive Q&A about Mike's background.</html>",
+				schema: {
+					type: "string",
+					description:
+						"HTML page with structured data (JSON-LD Person + FAQPage) plus an embedded AI chat widget at /_emdash/api/plugins/emdash-chat for conversational queries about the portfolio owner.",
+				},
+			},
+		}),
+	});
+	if (result instanceof Response) return result;
+	x402.applyHeaders(result, Astro.response);
+}
+
+const settings = await getSiteSettings();
+const hero = await getSection("hero");
+
+const { entries: positions, cacheHint: posCH } = await getEmDashCollection("positions");
+const { entries: projects } = await getEmDashCollection("projects");
+const { entries: education } = await getEmDashCollection("education");
+const { entries: certifications } = await getEmDashCollection("certifications");
+const { entries: endorsements } = await getEmDashCollection("endorsements");
+
+Astro.cache.set(posCH);
+
+const sortedPositions = positions.toSorted(
+	(a, b) => (a.data.sort_order ?? 99) - (b.data.sort_order ?? 99)
+);
+const sortedProjects = projects.toSorted(
+	(a, b) => (a.data.sort_order ?? 99) - (b.data.sort_order ?? 99)
+);
+const sortedEducation = education.toSorted(
+	(a, b) => (a.data.sort_order ?? 99) - (b.data.sort_order ?? 99)
+);
+const sortedCerts = certifications.toSorted(
+	(a, b) => (a.data.sort_order ?? 99) - (b.data.sort_order ?? 99)
+);
+const sortedEndorsements = endorsements.toSorted(
+	(a, b) => (a.data.sort_order ?? 99) - (b.data.sort_order ?? 99)
+);
+
+const sectionNav = [
+	{ id: "about", label: "About" },
+	{ id: "experience", label: "Experience" },
+	{ id: "projects", label: "Projects" },
+	{ id: "education", label: "Education" },
+	{ id: "endorsements", label: "References" },
+	{ id: "blog", label: "Writing", href: "/blog" },
+];
+
+// JSON-LD Person schema for SEO/AEO/GEO
+const name = settings?.title || "Mike Lembo";
+const jobTitle = settings?.tagline || "Product Manager";
+const siteUrl = Astro.url.origin;
+
+function extractText(blocks: any): string {
+	if (!Array.isArray(blocks)) return "";
+	return blocks
+		.map((b) =>
+			b?.children?.map((c: any) => c?.text).join(" ") ?? "",
+		)
+		.join(" ")
+		.trim();
+}
+
+const aboutText = extractText(hero?.content);
+
+const personSchema = {
+	"@context": "https://schema.org",
+	"@type": "Person",
+	name,
+	jobTitle,
+	description: aboutText,
+	url: siteUrl,
+	email: "michael.j.lembo@gmail.com",
+	sameAs: [
+		"https://www.linkedin.com/in/michaellembo/",
+	],
+	knowsAbout: [
+		"Product Management",
+		"Digital Assets",
+		"Cryptocurrency",
+		"Fintech",
+		"RegTech",
+		"B2B SaaS",
+		"0-to-1 Product Development",
+		"Public Sector Software",
+		"Generative AI",
+		"LLM Applications",
+	],
+	hasOccupation: sortedPositions.map((pos) => ({
+		"@type": "Occupation",
+		name: pos.data.title,
+		occupationLocation: pos.data.location
+			? { "@type": "Place", name: pos.data.location }
+			: undefined,
+		hiringOrganization: {
+			"@type": "Organization",
+			name: pos.data.company,
+			url: pos.data.url || undefined,
+		},
+	})),
+	alumniOf: sortedEducation.map((edu) => ({
+		"@type": "EducationalOrganization",
+		name: edu.data.institution,
+	})),
+	hasCredential: sortedCerts.map((cert) => ({
+		"@type": "EducationalOccupationalCredential",
+		name: cert.data.title,
+		credentialCategory: "certification",
+		recognizedBy: cert.data.issuer
+			? { "@type": "Organization", name: cert.data.issuer }
+			: undefined,
+	})),
+};
+
+// FAQ schema — helps AI engines cite specific answers
+const faqSchema = {
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	mainEntity: [
+		{
+			"@type": "Question",
+			name: "Who is Mike Lembo?",
+			acceptedAnswer: {
+				"@type": "Answer",
+				text: `${name} is a ${jobTitle} with 15 years of experience scaling B2B SaaS platforms and public-sector solutions across digital assets, fintech, regtech, and government.`,
+			},
+		},
+		{
+			"@type": "Question",
+			name: "Where does Mike Lembo currently work?",
+			acceptedAnswer: {
+				"@type": "Answer",
+				text: sortedPositions[0]
+					? `${name} is currently the ${sortedPositions[0].data.title} at ${sortedPositions[0].data.company}.`
+					: "",
+			},
+		},
+		{
+			"@type": "Question",
+			name: "What is Mike Lembo's experience with crypto and digital assets?",
+			acceptedAnswer: {
+				"@type": "Answer",
+				text: "Mike has led product at three major digital asset companies: CoinTracker (crypto tax infrastructure, 16 brokers supported), BitGo (custody platform for digital assets, APAC/EMEA expansion), and TaxBit (first tax-audit platform integrating blockchain/DeFi data, built public sector business from $150K to $5M+ revenue).",
+			},
+		},
+		{
+			"@type": "Question",
+			name: "What products has Mike Lembo built?",
+			acceptedAnswer: {
+				"@type": "Answer",
+				text: "Mike built DARTS (Digital Asset Revenue and Tax Suite) from 0-to-1 at TaxBit, now 30% of company revenue. He also founded Vibe Dieting, a nutrition-tracking app powered by OpenAI's Responses API, live at vibedieting.xyz. Earlier he delivered a government CMS that powers 9,000+ pages at oig.hhs.gov.",
+			},
+		},
+		{
+			"@type": "Question",
+			name: "How can I contact Mike Lembo?",
+			acceptedAnswer: {
+				"@type": "Answer",
+				text: `Email michael.j.lembo@gmail.com or connect on LinkedIn at https://www.linkedin.com/in/michaellembo/`,
+			},
+		},
+	],
+};
+---
+
+<Base>
+	<script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+	<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+	<div class="portfolio">
+		<!-- Left Column: Sticky Sidebar -->
+		<header class="sidebar">
+			<div class="sidebar-inner">
+				<h1 class="hero-name">{settings?.title || "Portfolio"}</h1>
+				<p class="hero-title">{settings?.tagline || "Professional"}</p>
+
+				<nav class="sidebar-nav" aria-label="Main navigation">
+					<ul>
+						{sectionNav.map((item) => (
+							<li>
+								<a class="nav-item" href={item.href || `#${item.id}`}>
+									<span class="nav-indicator"></span>
+									<span class="nav-text">{item.label}</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				</nav>
+
+				<div class="sidebar-links">
+					<a
+						href="mailto:michael.j.lembo@gmail.com"
+						aria-label="Email"
+						class="social-link"
+					>
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+					</a>
+					<a
+						href="https://www.linkedin.com/in/michaellembo/"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="LinkedIn"
+						class="social-link"
+					>
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+					</a>
+				</div>
+			</div>
+		</header>
+
+		<!-- Right Column: Main Content -->
+		<main id="content" class="main-content">
+			<section id="about" class="section">
+				<div class="section-header" data-number="01">
+					<h2>About</h2>
+				</div>
+				{hero?.content && (
+					<div class="about-content">
+						<PortableText value={hero.content} />
+					</div>
+				)}
+			</section>
+
+			{sortedPositions.length > 0 && (
+				<section id="experience" class="section">
+					<div class="section-header" data-number="02">
+						<h2>Experience</h2>
+					</div>
+					<div class="items-list">
+						{sortedPositions.map((pos) => (
+							<PositionCard
+								title={pos.data.title ?? "Untitled"}
+								company={pos.data.company ?? ""}
+								location={pos.data.location}
+								startDate={pos.data.start_date}
+								endDate={pos.data.end_date}
+								technologies={pos.data.technologies as string[] | undefined}
+								content={pos.data.content}
+								url={pos.data.url}
+							/>
+						))}
+					</div>
+				</section>
+			)}
+
+			{sortedProjects.length > 0 && (
+				<section id="projects" class="section">
+					<div class="section-header" data-number="03">
+						<h2>Projects</h2>
+					</div>
+					<div class="items-list">
+						{sortedProjects.map((proj) => (
+							<ProjectCard
+								title={proj.data.title ?? "Untitled"}
+								summary={proj.data.summary}
+								image={proj.data.featured_image}
+								url={proj.data.url}
+								githubUrl={proj.data.github_url}
+							/>
+						))}
+					</div>
+				</section>
+			)}
+
+			<section id="education" class="section">
+				<div class="section-header" data-number="04">
+					<h2>Education & Certifications</h2>
+				</div>
+				{sortedEducation.length > 0 && (
+					<div class="education-card">
+						<h3 class="card-subtitle">Education</h3>
+						{sortedEducation.map((edu) => (
+							<EducationCard
+								title={edu.data.title ?? "Untitled"}
+								institution={edu.data.institution ?? ""}
+								field={edu.data.field}
+								endDate={edu.data.end_date}
+							/>
+						))}
+					</div>
+				)}
+				{sortedCerts.length > 0 && (
+					<div class="education-card" style="margin-top: 1.5rem;">
+						<h3 class="card-subtitle">Certifications</h3>
+						<div class="certs-list">
+							{sortedCerts.map((cert) => (
+								<CertCard
+									title={cert.data.title ?? "Untitled"}
+									issuer={cert.data.issuer}
+								/>
+							))}
+						</div>
+					</div>
+				)}
+			</section>
+
+			{sortedEndorsements.length > 0 && (
+				<section id="endorsements" class="section">
+					<div class="section-header" data-number="05">
+						<h2>References</h2>
+					</div>
+					<div class="items-list">
+						{sortedEndorsements.map((end) => (
+							<EndorsementCard
+								name={end.data.title ?? "Anonymous"}
+								role={end.data.role}
+								company={end.data.company}
+								relationship={end.data.relationship}
+								content={end.data.content}
+								url={end.data.url}
+							/>
+						))}
+					</div>
+					<div class="section-cta">
+						<a href="https://www.linkedin.com/in/michaellembo/" target="_blank" rel="noopener noreferrer" class="cta-link">
+							See all references
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+						</a>
+					</div>
+				</section>
+			)}
+		</main>
+	</div>
+</Base>
+
+<style>
+	.portfolio {
+		position: relative;
+		z-index: 1;
+		max-width: var(--max-width);
+		margin: 0 auto;
+		padding: 0 1.5rem;
+		display: flex;
+		gap: 1.5rem;
+	}
+
+	/* Sidebar */
+	.sidebar {
+		position: sticky;
+		top: 0;
+		max-height: 100vh;
+		width: 40%;
+		flex-shrink: 0;
+		padding: 6rem 0;
+	}
+
+	.sidebar-inner {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.hero-name {
+		font-family: var(--font-display);
+		font-size: 4rem;
+		font-weight: 500;
+		line-height: 1.05;
+		letter-spacing: -0.03em;
+		color: var(--text-primary);
+	}
+
+	.hero-title {
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		color: var(--text-muted);
+		margin-top: 0.5rem;
+		font-weight: 400;
+		letter-spacing: -0.0125em;
+	}
+
+	/* Navigation */
+	.sidebar-nav {
+		margin-top: 3rem;
+	}
+
+	.sidebar-nav ul {
+		list-style: none;
+	}
+
+	.nav-item {
+		display: flex;
+		align-items: center;
+		padding: 0.5rem 0;
+		text-decoration: none;
+		color: var(--text-muted);
+		transition: color 150ms ease;
+	}
+
+	.nav-item:hover {
+		color: var(--text-primary);
+	}
+
+	.nav-item:hover .nav-indicator {
+		width: 3.5rem;
+		background: var(--accent);
+	}
+
+	.nav-indicator {
+		display: inline-block;
+		width: 1.75rem;
+		height: 1px;
+		background: var(--border-medium);
+		margin-right: 1rem;
+		transition: all 200ms ease;
+	}
+
+	.nav-text {
+		font-family: var(--font-display);
+		font-size: 0.75rem;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+	}
+
+	/* Social links */
+	.sidebar-links {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 2rem;
+	}
+
+	.social-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		border-radius: var(--radius-pill);
+		background: var(--surface-300);
+		border: 1px solid var(--border-primary);
+		color: var(--text-muted);
+		transition: color 150ms ease, box-shadow 200ms ease;
+	}
+
+	.social-link:hover {
+		color: var(--accent-hover);
+		box-shadow: var(--shadow-focus);
+	}
+
+	/* Main Content */
+	.main-content {
+		width: 60%;
+		padding: 3rem 0 6rem;
+	}
+
+	.section {
+		margin-bottom: 4.5rem;
+		scroll-margin-top: 4rem;
+	}
+
+	/* Section Headers — warm editorial numbered */
+	.section-header {
+		position: relative;
+		padding-bottom: 1rem;
+		margin-bottom: 2rem;
+		display: flex;
+		align-items: baseline;
+		gap: 1.25rem;
+		border-bottom: 1px solid var(--border-primary);
+	}
+
+	.section-header::before {
+		content: attr(data-number);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 400;
+		color: var(--accent);
+		letter-spacing: 0.08em;
+	}
+
+	.section-header h2 {
+		font-family: var(--font-display);
+		font-size: 2.25rem;
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+		color: var(--text-primary);
+	}
+
+	/* About — editorial serif body */
+	.about-content {
+		font-family: var(--font-body);
+		font-size: 1.2rem;
+		line-height: 1.5;
+		color: var(--text-secondary);
+		font-feature-settings: "cswh" on, "ss01" on;
+	}
+
+	.about-content :global(p + p) {
+		margin-top: 1rem;
+	}
+
+	/* Items list */
+	.items-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	/* Education card wrapper */
+	.education-card {
+		background: var(--surface-400);
+		border: 1px solid var(--border-primary);
+		border-radius: var(--radius-md);
+		padding: 1.5rem;
+		transition: box-shadow 200ms ease;
+	}
+
+	.education-card:hover {
+		box-shadow: var(--shadow-ambient);
+	}
+
+	.card-subtitle {
+		font-family: var(--font-display);
+		font-size: 0.75rem;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--text-muted);
+		margin-bottom: 1rem;
+	}
+
+	.certs-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	/* Section CTA */
+	.section-cta {
+		margin-top: 2rem;
+	}
+
+	.cta-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 10px 14px;
+		font-family: var(--font-display);
+		font-size: 0.875rem;
+		font-weight: 400;
+		color: var(--text-primary);
+		background: var(--surface-300);
+		border-radius: var(--radius-md);
+		transition: color 150ms ease, box-shadow 200ms ease;
+	}
+
+	.cta-link:hover {
+		color: var(--accent-hover);
+		box-shadow: var(--shadow-focus);
+	}
+
+	/* Mobile */
+	@media (max-width: 768px) {
+		.portfolio {
+			flex-direction: column;
+			gap: 0;
+		}
+
+		.sidebar {
+			position: relative;
+			width: 100%;
+			max-height: none;
+			padding: 3rem 0 1rem;
+		}
+
+		.sidebar-nav {
+			display: none;
+		}
+
+		.main-content {
+			width: 100%;
+			padding: 1rem 0 3rem;
+		}
+
+		.hero-name {
+			font-size: 2.75rem;
+		}
+
+		.section-header h2 {
+			font-size: 1.75rem;
+		}
+	}
+
+	@media print {
+		.portfolio {
+			display: block;
+		}
+
+		.sidebar {
+			position: relative;
+			width: 100%;
+			padding: 1rem 0;
+		}
+
+		.sidebar-nav, .sidebar-links {
+			display: none;
+		}
+
+		.main-content {
+			width: 100%;
+		}
+	}
+</style>

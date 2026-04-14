@@ -1,0 +1,40 @@
+{
+	"name": "@emdash-cms/plugin-chat",
+	"version": "0.0.1",
+	"description": "AI-powered Intercom-style chat widget for EmDash CMS",
+	"type": "module",
+	"main": "src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./descriptor": "./src/descriptor.ts",
+		"./admin": "./src/admin.tsx"
+	},
+	"files": [
+		"src"
+	],
+	"keywords": [
+		"emdash",
+		"cms",
+		"plugin",
+		"chat",
+		"ai",
+		"intercom"
+	],
+	"license": "MIT",
+	"peerDependencies": {
+		"astro": ">=6.0.0-beta.0",
+		"emdash": "workspace:*",
+		"react": "^18.0.0 || ^19.0.0"
+	},
+	"dependencies": {
+		"ulidx": "^2.4.1"
+	},
+	"scripts": {
+		"typecheck": "tsgo --noEmit"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/emdash-cms/emdash.git",
+		"directory": "packages/plugins/chat"
+	}
+}
