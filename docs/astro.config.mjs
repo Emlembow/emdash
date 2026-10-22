@@ -8,7 +8,6 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: "EmDash",
-			tagline: "The Astro-native CMS",
 			logo: {
 				light: "./src/assets/logo-light.svg",
 				dark: "./src/assets/logo-dark.svg",
@@ -167,5 +166,5 @@ export default defineConfig({
 		}),
 	],
 
-	adapter: cloudflare(),
+	adapter: cloudflare({ prerenderEnvironment: "node" }),
 });
