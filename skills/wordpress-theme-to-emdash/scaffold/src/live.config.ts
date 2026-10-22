@@ -1,19 +1,13 @@
 /**
- * EmDash Live Config
+ * EmDash Live Content Collections
  *
- * This file defines your content collections using EmDash's loader.
- * It replaces Astro's content collections for CMS-managed content.
+ * Defines the _emdash collection that handles all content types from the database.
+ * Query specific types using getEmDashCollection() and getEmDashEntry().
  */
 
-import { defineCollection } from "astro:content";
-import { emdashLoader } from "emdash";
+import { defineLiveCollection } from "astro:content";
+import { emdashLoader } from "emdash/runtime";
 
-// Posts collection - loaded from EmDash CMS
 export const collections = {
-	posts: defineCollection({
-		loader: emdashLoader({ collection: "posts" }),
-	}),
-	pages: defineCollection({
-		loader: emdashLoader({ collection: "pages" }),
-	}),
+	_emdash: defineLiveCollection({ loader: emdashLoader() }),
 };

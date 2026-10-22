@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emdash-cms/blocks": "workspace:*",
     "@cloudflare/kumo": "^1.1.0",
+    "@emdash-cms/blocks": "workspace:*",
     "@phosphor-icons/react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
@@ -22,9 +22,7 @@
     "@vitejs/plugin-react": "^4.6.0",
     "tailwindcss": "^4.1.11",
     "typescript": "catalog:",
-    "vite": "^6.3.5",
+    "vite": "^6.4.5",
     "wrangler": "^4.63.0"
-  },
-  "peerDependencies": {},
-  "optionalDependencies": {}
+  }
 }

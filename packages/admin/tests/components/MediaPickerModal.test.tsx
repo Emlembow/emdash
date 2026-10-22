@@ -9,7 +9,7 @@ import { render } from "../utils/render.tsx";
 // Constants
 // ---------------------------------------------------------------------------
 
-const UPLOAD_BUTTON_REGEX = /Upload/;
+const UPLOAD_BUTTON_REGEX = /^Upload$/;
 
 vi.mock("../../src/lib/api", async () => {
 	const actual = await vi.importActual("../../src/lib/api");
