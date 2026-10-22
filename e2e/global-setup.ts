@@ -59,7 +59,7 @@ async function waitForServer(url: string, timeoutMs: number): Promise<void> {
 	while (Date.now() - start < timeoutMs) {
 		try {
 			const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
-			if (res.status > 0) return;
+			if (res.ok) return;
 		} catch {
 			// Server not ready yet
 		}
@@ -249,7 +249,7 @@ export default async function globalSetup(): Promise<void> {
 
 	// 2. Start dev server (with marketplace URL injected via env)
 	const astroBin = join(fixtureNodeModules, ".bin", "astro");
-	const server = spawn(astroBin, ["dev", "--port", String(PORT)], {
+	const server = spawn(astroBin, ["dev", "--ignore-lock", "--port", String(PORT)], {
 		cwd: workDir,
 		env: {
 			...process.env,

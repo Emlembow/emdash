@@ -151,6 +151,8 @@ describe("Site build verification", () => {
 					timeout: 240_000,
 					env: {
 						...process.env,
+						VITEST: undefined,
+						ASTRO_DEV_BACKGROUND: "0",
 						CI: "true",
 					},
 				},
@@ -186,14 +188,20 @@ async function bootSite(site: SiteCase): Promise<BootedServer> {
 	}
 
 	const baseUrl = `http://localhost:${site.port}`;
-	const serverProcess = spawn("pnpm", ["exec", "astro", "dev", "--port", String(site.port)], {
-		cwd: site.dir,
-		env: {
-			...process.env,
-			CI: "true",
+	const serverProcess = spawn(
+		"pnpm",
+		["exec", "astro", "dev", "--ignore-lock", "--port", String(site.port)],
+		{
+			cwd: site.dir,
+			env: {
+				...process.env,
+				VITEST: undefined,
+				ASTRO_DEV_BACKGROUND: "0",
+				CI: "true",
+			},
+			stdio: "pipe",
 		},
-		stdio: "pipe",
-	});
+	);
 
 	let output = "";
 	serverProcess.stdout?.on("data", (data: Buffer) => {

@@ -129,9 +129,8 @@ async function waitForServer(url: string, timeoutMs: number): Promise<void> {
 	while (Date.now() - start < timeoutMs) {
 		try {
 			const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
-			// Any HTTP response (even 500) means the server is up.
-			// We only keep waiting on connection errors (caught below).
-			if (res.status > 0) return;
+			// Wait until the setup route is ready, not just the Vite listener.
+			if (res.ok) return;
 		} catch {
 			// Server not ready yet — connection refused / timeout
 		}
@@ -174,10 +173,12 @@ export async function createTestServer(options: TestServerOptions): Promise<Test
 
 	// --- 2. Start dev server ---
 	const astroBin = join(fixtureNodeModules, ".bin", "astro");
-	const server = spawn(astroBin, ["dev", "--port", String(port)], {
+	const server = spawn(astroBin, ["dev", "--ignore-lock", "--port", String(port)], {
 		cwd: workDir,
 		env: {
 			...process.env,
+			VITEST: undefined,
+			ASTRO_DEV_BACKGROUND: "0",
 			EMDASH_TEST_DB: `file:${dbPath}`,
 		},
 		stdio: "pipe",
